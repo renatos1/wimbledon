@@ -12,28 +12,8 @@ public class Player : NetworkBehaviour
         if (isServer) {
             SpawnRaposa();
         }
-
-        Debug.Log("isLocalPlayer?");
-        Debug.Log(isLocalPlayer);
-        
-        if (isLocalPlayer) {
-            Camera.main.GetComponent<SmoothCam2D>().target = myRaposa.transform;
-        }   
     }
 
-    // public override void OnStartLocalPlayer()
-    // {
-    //     Debug.Log("OnStartLocalPlayer");
-    //     Debug.Log("isLocalPlayer");
-    //     Debug.Log(isLocalPlayer);
-    //     Debug.Log("localPlayerAuthority");
-    //     Debug.Log(localPlayerAuthority);
-
-    //     if (isLocalPlayer) {
-    //         Camera.main.GetComponent<SmoothCam2D>().target = myRaposa.transform; //Fix camera on "me"
-    //     }
-
-    // }
 
     public GameObject RaposaPrefab;
     GameObject myRaposa;

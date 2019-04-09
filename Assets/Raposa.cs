@@ -11,13 +11,26 @@ public class Raposa : NetworkBehaviour
 
     }
 
-    public override void OnStartClient()
+
+    public override void OnStartAuthority()
     {
-        Debug.Log("Raposa:OnClientConnect - isLocalPlayer");
+        base.OnStartAuthority();
+        Debug.Log("Raposa:OnStartLocalPlayer - isLocalPlayer");
         Debug.Log(isLocalPlayer);
-        if (isLocalPlayer) {
+        Debug.Log("Raposa:OnStartLocalPlayer - hasAuthority");
+        Debug.Log(hasAuthority);
+        Debug.Log("Raposa:OnStartLocalPlayer - isClient");
+        Debug.Log(isClient);
+        Debug.Log("Raposa:OnStartLocalPlayer - isServer");
+        Debug.Log(isServer);
+
+        if (hasAuthority) {
             Camera.main.GetComponent<SmoothCam2D>().target = transform;
-        } 
+        }
+
+        // Turn off main camera because GamePlayer prefab has its own camera
+        // GetComponentInChildren<Camera>().enabled = true;
+        // Camera.main.enabled = false; 
     }
 
 
