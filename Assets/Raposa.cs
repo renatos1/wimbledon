@@ -49,20 +49,14 @@ public class Raposa : NetworkBehaviour
     }
 
 
-    float Speed = 5;
-    float jumpForce = 70;
-    [HideInInspector] public bool jump = false;
+    public CharacterController2D controller;
+    public float runSpeed = 2f;
+    float horizontalMove = 0f;
+    bool jump = false;
 
     [SyncVar]
     Vector3 serverPosition;
     Vector3 serverPositionSmoothVelocity;
-
-    // animate the game object from -1 to +1 and back
-    public float minimum = -1.0F;
-    public float maximum =  1.0F;
-
-    // starting value for the Lerp
-    static float t = 0.0f;
 
 
     // Update is called once per frame
@@ -72,81 +66,41 @@ public class Raposa : NetworkBehaviour
 
         }
 
-        // if (hasAuthority) {
-        //     AuthorityUpdate();    
-        // }   
+        if (hasAuthority) {
+            AuthorityUpdate();
+        }
 
-        // if (!hasAuthority) {
-        //     transform.position = Vector3.SmoothDamp(
-        //         transform.position,
-        //         serverPosition,
-        //         ref serverPositionSmoothVelocity,
-        //         0.25f
-        //     );
-        // }  
+
     }
 
     void FixedUpdate() 
     {
-        if (hasAuthority) {
-            AuthorityUpdate();    
-        }   
+        // if (hasAuthority) {
+        //     AuthorityUpdate();    
+        // }   
     }
 
     void AuthorityUpdate() {
 
-        if (Input.GetButtonDown("Jump"))
-        {
-            minimum = transform.position.y;
-            maximum = transform.position.y + 2;
+        // Horizontal moving
+        horizontalMove = Input.GetAxisRaw("Horizontal") * runSpeed;
+        if (Input.GetButtonDown("Jump")) {
+            print("jumping");
             jump = true;
-        } 
-
-        float h = Input.GetAxis("Horizontal");
-        // float _j = 0;
-        float movement = h * Speed * Time.fixedDeltaTime;
-
-
-        //    if (Input.GetButtonDown("Jump")) {
-        //     float movement = Input.GetAxis("Vertical") * Speed * Time.deltaTime;
-        //    }
-        
-        // transform.Translate(movement, _j, 0);
-        // transform.position = Vector3.SmoothDamp(
-        //         transform.position,
-        //         new Vector3(movement, _j, 0),
-        //         ref velocity,
-        //         0.25f
-        //     );
-
-        // if (jump) {
-        //     transform.Translate(Vector3.up * jumpForce * Time.deltaTime);
-        //     jump = false;
-        // }
-        // rb2d.AddForce(Vector2.right * h * 100f);
-        transform.Translate(movement, 0, 0);
-        
-
-        if (jump) {
-            // animate the position of the game object...
-            transform.position = new Vector3(transform.position.x, Mathf.Lerp(minimum, maximum, t), 0);
-
-            // .. and increase the t interpolater
-            t += 0.9f * Time.fixedDeltaTime;
-
-            // now check if the interpolator has reached 1.0
-            // and swap maximum and minimum so game object moves
-            // in the opposite direction.
-            if (t > 1.0f)
-            {   
-                t=0.0f;
-                jump=false;
-            }
         }
 
-        
+         if (Input.GetButtonDown("Fire1"))
+         {
+             print("attacking");
+         }
+
+        controller.Move(horizontalMove * Time.deltaTime, false, jump);
+        jump = false;
+
+        // Updates the Player position on the server
         CmdUpdatePosition(transform.position);
     }
+
 
     [Command]
     void CmdUpdatePosition(Vector3 newPosition) {

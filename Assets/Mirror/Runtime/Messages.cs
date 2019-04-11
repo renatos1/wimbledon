@@ -3,9 +3,14 @@ using UnityEngine;
 
 namespace Mirror
 {
-    // This can't be an interface because users don't need to implement the
-    // serialization functions, we'll code generate it for them when they omit it.
-    public abstract class MessageBase
+    public interface IMessageBase
+    {
+        void Deserialize(NetworkReader reader);
+
+        void Serialize(NetworkWriter writer);
+    }
+
+    public abstract class MessageBase : IMessageBase
     {
         // De-serialize the contents of the reader into this message
         public virtual void Deserialize(NetworkReader reader) {}
@@ -94,12 +99,12 @@ namespace Mirror
 
         public override void Deserialize(NetworkReader reader)
         {
-            value = (int)reader.ReadPackedUInt32();
+            value = reader.ReadPackedInt32();
         }
 
         public override void Serialize(NetworkWriter writer)
         {
-            writer.WritePackedUInt32((uint)value);
+            writer.WritePackedInt32(value);
         }
     }
 
@@ -196,6 +201,7 @@ namespace Mirror
         public Guid assetId;
         public Vector3 position;
         public Quaternion rotation;
+        public Vector3 scale;
         public byte[] payload;
 
         public override void Deserialize(NetworkReader reader)
@@ -204,6 +210,7 @@ namespace Mirror
             assetId = reader.ReadGuid();
             position = reader.ReadVector3();
             rotation = reader.ReadQuaternion();
+            scale = reader.ReadVector3();
             payload = reader.ReadBytesAndSize();
         }
 
@@ -213,6 +220,7 @@ namespace Mirror
             writer.Write(assetId);
             writer.Write(position);
             writer.Write(rotation);
+            writer.Write(scale);
             writer.WriteBytesAndSize(payload);
         }
     }
@@ -223,6 +231,7 @@ namespace Mirror
         public ulong sceneId;
         public Vector3 position;
         public Quaternion rotation;
+        public Vector3 scale;
         public byte[] payload;
 
         public override void Deserialize(NetworkReader reader)
@@ -231,6 +240,7 @@ namespace Mirror
             sceneId = reader.ReadUInt64();
             position = reader.ReadVector3();
             rotation = reader.ReadQuaternion();
+            scale = reader.ReadVector3();
             payload = reader.ReadBytesAndSize();
         }
 
@@ -240,6 +250,7 @@ namespace Mirror
             writer.Write(sceneId);
             writer.Write(position);
             writer.Write(rotation);
+            writer.Write(scale);
             writer.WriteBytesAndSize(payload);
         }
     }
