@@ -7,6 +7,7 @@ public class Raposa : NetworkBehaviour
 
     private Rigidbody2D rb2d;
     private Vector3 velocity = Vector3.zero;
+    public float Health = 100f;
 
 
     // Use this for initialization
@@ -89,16 +90,22 @@ public class Raposa : NetworkBehaviour
             jump = true;
         }
 
-         if (Input.GetButtonDown("Fire1"))
-         {
-             print("attacking");
-         }
-
         controller.Move(horizontalMove * Time.deltaTime, false, jump);
         jump = false;
 
         // Updates the Player position on the server
         CmdUpdatePosition(transform.position);
+    }
+
+    public void TakeDamage(int damage) {
+        Debug.Log("Damage Taken");
+        print(netId);
+        Health -= damage;
+
+        if (Health <= 0) {
+            Debug.Log("Morreu");
+            Destroy(gameObject);
+        }
     }
 
 
