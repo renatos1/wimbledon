@@ -433,10 +433,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a16b2d90da720ca89d2a9ecdaa9daec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  syncInterval: 0.01
+  syncInterval: 0.1
   Health: 100
   controller: {fileID: 1083028299242210963}
-  runSpeed: 40
+  runSpeed: 30
+  whatIsChest:
+    serializedVersion: 2
+    m_Bits: 512
 --- !u!114 &386991573215463738
 MonoBehaviour:
   m_ObjectHideFlags: 0

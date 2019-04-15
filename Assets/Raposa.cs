@@ -7,8 +7,6 @@ public class Raposa : NetworkBehaviour
 
     private Rigidbody2D rb2d;
     private Vector3 velocity = Vector3.zero;
-    public float Health = 100f;
-
 
     // Use this for initialization
     void Awake () 
@@ -37,27 +35,32 @@ public class Raposa : NetworkBehaviour
         Debug.Log(isServer);
 
         if (hasAuthority) {
+            id = netId;
             Camera.main.GetComponent<SmoothCam2D>().target = transform;
         }
 
-        // if (!hasAuthority) {
-        //     rb2d.isKinematic = true;
-        // }   
+        if (!hasAuthority) {
+            rb2d.isKinematic = true;
+        }   
 
         // Turn off main camera because GamePlayer prefab has its own camera
         // GetComponentInChildren<Camera>().enabled = true;
         // Camera.main.enabled = false; 
     }
 
+    [SyncVar] public float Health = 100f;
 
     public CharacterController2D controller;
     public float runSpeed = 2f;
     float horizontalMove = 0f;
     bool jump = false;
+    public LayerMask whatIsChest;
+    uint id;
 
     [SyncVar]
     Vector3 serverPosition;
     Vector3 serverPositionSmoothVelocity;
+    
 
 
     // Update is called once per frame
@@ -71,14 +74,6 @@ public class Raposa : NetworkBehaviour
             AuthorityUpdate();
         }
 
-
-    }
-
-    void FixedUpdate() 
-    {
-        // if (hasAuthority) {
-        //     AuthorityUpdate();    
-        // }   
     }
 
     void AuthorityUpdate() {
@@ -93,20 +88,40 @@ public class Raposa : NetworkBehaviour
         controller.Move(horizontalMove * Time.deltaTime, false, jump);
         jump = false;
 
+        if (Input.GetKeyDown(KeyCode.E)) {
+            print("Using");
+            Collider2D[] chestsToOpen = Physics2D.OverlapBoxAll(transform.position, new Vector2(1f, 0.09f), 0, whatIsChest);
+            print("chests found: ");
+            print(chestsToOpen.Length);
+            for (int i = 0; i < chestsToOpen.Length; i++) {
+                chestsToOpen[i].GetComponent<Chest>().Open();
+            }
+        }
+
         // Updates the Player position on the server
         CmdUpdatePosition(transform.position);
     }
 
-    public void TakeDamage(int damage) {
-        Debug.Log("Damage Taken");
-        print(netId);
-        Health -= damage;
 
-        if (Health <= 0) {
-            Debug.Log("Morreu");
-            Destroy(gameObject);
-        }
+    public void TakeDamage(int damage, uint from) {
+        CmdTakeDamage(damage, from);
     }
+
+     IEnumerator Dead() {
+        Debug.Log ("dead");
+        GetComponent<Renderer>().enabled = false;
+        yield return new WaitForSeconds(5);
+        Debug.Log ("respawn");
+        GetComponent<Renderer>().enabled = true;
+     }
+
+     IEnumerator DeadRaposa(Raposa raposa) {
+        Debug.Log ("dead");
+        raposa.GetComponent<Renderer>().enabled = false;
+        yield return new WaitForSeconds(5);
+        Debug.Log ("respawn");
+        raposa.GetComponent<Renderer>().enabled = true;
+     }
 
 
     [Command]
@@ -118,6 +133,35 @@ public class Raposa : NetworkBehaviour
         // and return
 
         serverPosition = newPosition;
+    }
+
+    [Command]
+    public void CmdTakeDamage(int damage, uint from) {
+        Debug.Log("Damage Taken");
+        print(netId);
+        Health -= damage;
+
+        if (Health <= 0) {
+            StartCoroutine(Dead());
+        }
+    }
+
+    [Command]
+    public void CmdDealDamage(int damage, uint from, uint to) {
+        Debug.Log("Damage Taken From: " + from);
+        Raposa raposa = NetworkIdentity.spawned[to].GetComponent<Raposa>();
+        raposa.Health -= damage;
+        Debug.Log("Raposa " + raposa.netId + " has " + raposa.Health + " health.");
+        if (raposa.Health <= 0) {
+            // StartCoroutine(DeadRaposa(raposa));
+            RpcKillRaposa(to);
+        }
+        
+    }
+
+    [ClientRpc]
+    void RpcKillRaposa(uint r) {
+        StartCoroutine(DeadRaposa( NetworkIdentity.spawned[r].GetComponent<Raposa>()));
     }
 
     [ClientRpc]
