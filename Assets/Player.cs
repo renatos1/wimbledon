@@ -43,7 +43,7 @@ public class Player : NetworkBehaviour
 
         // The way to tell everyone to spawn the object in network:
         NetworkServer.SpawnWithClientAuthority(myRaposa, connectionToClient);
-        myRaposa.GetComponent<TextMesh>().text = netId.ToString();
+        // myRaposa.GetComponent<TextMesh>().text = netId.ToString();
     }
 
 

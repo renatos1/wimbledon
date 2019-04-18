@@ -11,6 +11,8 @@ public class PlayerAttack : NetworkBehaviour
 
     public Transform attackPos;
     public LayerMask whatIsEnemies;
+    public LayerMask whatIsChest;
+    public GameObject WeaponPrefab;
     public float attackRangeX;
     public float attackRangeY;
     public int damage;
@@ -50,8 +52,28 @@ public class PlayerAttack : NetworkBehaviour
             } else {
                 timeBtwAttack -= Time.deltaTime;
             }
+
+            if (Input.GetKeyDown(KeyCode.E)) {
+                Collider2D[] chestsToOpen = Physics2D.OverlapBoxAll(attackPos.position, new Vector2(attackRangeX, attackRangeY), 0, whatIsChest);
+                print("chests found: ");
+                print(chestsToOpen.Length);
+                for (int i = 0; i < chestsToOpen.Length; i++) {
+                    Chest c = chestsToOpen[i].GetComponent<Chest>();
+                    CmdOpenChest(c.netId);
+                }
+            }
         }
-         
+    }
+
+    [Command]
+    void CmdOpenChest(uint chest) {
+        Chest c = NetworkIdentity.spawned[chest].GetComponent<Chest>();
+        if (!c.isOpened) {
+            // GameObject wep = Instantiate(c.WeaponPrefab, c.transform.position, Quaternion.identity) as GameObject;
+            // NetworkServer.Spawn(wep);
+            print("CmdOpenChest: Opening Chest: " + c.netId);
+            c.RpcOpen();
+        }
     }
 
 

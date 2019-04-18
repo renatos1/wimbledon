@@ -7,6 +7,9 @@ public class Chest : NetworkBehaviour
 {
 
     Animator animator;
+    public GameObject WeaponPrefab;
+
+    [SyncVar] public bool isOpened = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -21,8 +24,18 @@ public class Chest : NetworkBehaviour
         
     }
 
-    public void Open() {
-        print("Opening Chest");
-        animator.SetBool("IsOpened", true);
+    [Server]
+    public void RpcOpen() {
+        Debug.Log("RpcOpen: Executing RpcOpen on Chest: " + netId);
+        if (!isOpened) {
+            print("RpcOpen: Opening Chest");
+            animator.SetBool("IsOpened", true);
+            isOpened = true;
+            GameObject wep = Instantiate(WeaponPrefab, transform.position, Quaternion.identity) as GameObject;
+            NetworkServer.Spawn(wep);
+        } else {
+            print("RpcOpen: Chest already opened");
+        }
     }
+
 }

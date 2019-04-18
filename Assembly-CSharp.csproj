@@ -63,6 +63,7 @@
     <Compile Include="Assets\CharacterController2D.cs" />
     <Compile Include="Assets\Chest.cs" />
     <Compile Include="Assets\GameManager.cs" />
+    <Compile Include="Assets\GUIName.cs" />
     <Compile Include="Assets\Mirror\Components\NetworkAnimator.cs" />
     <Compile Include="Assets\Mirror\Components\NetworkLobbyManager.cs" />
     <Compile Include="Assets\Mirror\Components\NetworkLobbyPlayer.cs" />
@@ -90,9 +91,11 @@
     <Compile Include="Assets\Unity-Logs-Viewer\Reporter\ReporterMessageReceiver.cs" />
     <Compile Include="Assets\Unity-Logs-Viewer\Reporter\Test\Rotate.cs" />
     <Compile Include="Assets\Unity-Logs-Viewer\Reporter\Test\TestReporter.cs" />
+    <Compile Include="Assets\Weapon.cs" />
     <None Include="Assets\Mirror\Readme.txt" />
     <None Include="Assets\Mirror\License.txt" />
     <None Include="Assets\StreamingAssets\build_info.txt" />
+    <None Include="Assets\FreePixelGear\ReadMe.txt" />
     <None Include="Assets\BayatGames\Free Platform Game Assets\Readme.txt" />
     <Reference Include="Unity.TextMeshPro.Editor">
       <HintPath>E:/Unity Projects/wimbledon/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>

@@ -66,7 +66,6 @@ public class CharacterController2D : NetworkBehaviour
 
 	 void OnCollisionEnter2D(Collision2D hit)
      {
-		 print("collision enter");
          if (hit.gameObject.tag == "ground")
          {
 			 print("on ground");
