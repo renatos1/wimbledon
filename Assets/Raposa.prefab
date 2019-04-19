@@ -267,7 +267,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6370697491597047497}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.323, y: -0.64, z: 0}
+  m_LocalPosition: {x: -1.323, y: -0.64, z: -5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 6370697491005263195}
@@ -453,7 +453,7 @@ MonoBehaviour:
   animator: {fileID: 6370697491597047489}
   Health: 100
   controller: {fileID: 1083028299242210963}
-  runSpeed: 30
+  runSpeed: 15
   whatIsChest:
     serializedVersion: 2
     m_Bits: 512
