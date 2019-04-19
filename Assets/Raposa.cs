@@ -9,6 +9,8 @@ public class Raposa : NetworkBehaviour
     private Vector3 velocity = Vector3.zero;
     private GUIName nameTag;
 
+    public Animator animator;
+
     // Use this for initialization
     void Awake () 
     {
@@ -91,9 +93,13 @@ public class Raposa : NetworkBehaviour
 
         // Horizontal moving
         horizontalMove = Input.GetAxisRaw("Horizontal") * runSpeed;
+
+	animator.SetFloat("Horizontal", Mathf.Abs(horizontalMove));
+
         if (Input.GetButtonDown("Jump")) {
             print("jumping");
             jump = true;
+	    // animator.SetBoolean("IsJumping", true);
         }
 
         controller.Move(horizontalMove * Time.deltaTime, false, jump);
